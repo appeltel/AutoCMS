@@ -93,6 +93,11 @@ export AUTOCMS_SUCCESS_TOKEN="AutoCMS: ALL TESTS SUCCESSFUL"
 # logic is separated so that other schedulers may be implemented.
 export AUTOCMS_SCHEDULER="slurm"
 
+# Set the following to TRUE if you want to use a SLURM reservation 
+# instead of a normal account. If TRUE, AUTOCMS_GNAME should be the 
+# name of your reservation.
+export AUTOCMS_SLURM_RESERVATION=FALSE
+
 #################################################################
 #
 # Settings used by the example_test

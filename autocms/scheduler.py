@@ -101,15 +101,23 @@ class SlurmScheduler(Scheduler):
         slurm_script = testname + '.slurm'
         testdir = os.path.join(self.config['AUTOCMS_BASEDIR'],
                                testname)
+        # If AUTOCMS_SLURM_RESERVATION is set to "TRUE"
+        # AUTOCMS_GNAME should refer to a reservation rather than
+        # an account, i.e. call sbatch with --reservation=
+        # rather than --account=
+        account_type = 'account'
+        if self.config['AUTOCMS_SLURM_RESERVATION'] == 'TRUE':
+            account_type = 'reservation'
         # need to go ahead and export the config path in case
         # this was not called through autocms.sh
         cmd = ('cd {0}; export AUTOCMS_COUNTER={1}; '
                'export AUTOCMS_CONFIGFILE={2}; '
-               'sbatch --account={3} {4} '
+               'sbatch --{3}={4} {5} '
                '--export=AUTOCMS_COUNTER,AUTOCMS_CONFIGFILE '
                '2>&1'.format(testdir,
                              counter,
                              self.config['AUTOCMS_CONFIGFILE'],
+                             account_type,
                              self.config['AUTOCMS_GNAME'],
                              slurm_script))
         result = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
