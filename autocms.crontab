@@ -1,5 +1,0 @@
-MAILTO=""
-*/10 * * * * cd /home/tuos/autocms/AutoCMS && /home/tuos/autocms/AutoCMS/autocms.sh submit skim_test 1
-0,10,20,30,40,50 * * * * cd /home/tuos/autocms/AutoCMS && /home/tuos/autocms/AutoCMS/autocms.sh logharvest skim_test
-5,15,25,35,45,55 * * * * cd /home/tuos/autocms/AutoCMS && /home/tuos/autocms/AutoCMS/autocms.sh report skim_test
-57 */3 * * * cd /home/tuos/autocms/AutoCMS && /home/tuos/autocms/AutoCMS/autocms.sh statsharvest skim_test
