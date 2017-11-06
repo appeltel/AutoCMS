@@ -103,7 +103,7 @@ autocms_submit ()
     if [ ${#commandline_args[@]} -ge 3 ]; then
         NJOBS=${commandline_args[2]}
     fi
-    python submitter.py ${commandline_args[1]} -n $NJOBS
+    ${AUTOCMS_PYTHON_EXECUTABLE} submitter.py ${commandline_args[1]} -n $NJOBS
     exit 0
   else
     echo "Request to submit non-existent test ${commandline_args[1]} failed"
@@ -114,7 +114,7 @@ autocms_submit ()
 autocms_report ()
 {
   if [ -d "${AUTOCMS_BASEDIR}/${commandline_args[1]}" ]; then
-    python reporter.py ${commandline_args[1]}
+    ${AUTOCMS_PYTHON_EXECUTABLE} reporter.py ${commandline_args[1]}
     exit 0
   else
     echo "Request to report non-existent test ${commandline_args[1]} failed"
@@ -125,7 +125,7 @@ autocms_report ()
 autocms_logharvest ()
 {
   if [ -d "${AUTOCMS_BASEDIR}/${commandline_args[1]}" ]; then
-    python logharvester.py ${commandline_args[1]} ${commandline_args[2]}
+    ${AUTOCMS_PYTHON_EXECUTABLE} logharvester.py ${commandline_args[1]} ${commandline_args[2]}
     exit 0
   else
     echo "Request to harvest non-existent test ${commandline_args[1]} failed"
@@ -136,7 +136,7 @@ autocms_logharvest ()
 autocms_statsharvest ()
 {
   if [ -d "${AUTOCMS_BASEDIR}/${commandline_args[1]}" ]; then
-    python statsharvester.py ${commandline_args[1]}
+    ${AUTOCMS_PYTHON_EXECUTABLE} statsharvester.py ${commandline_args[1]}
     exit 0
   else
     echo "Request to statsharvest non-existent test ${commandline_args[1]} failed"
@@ -198,6 +198,9 @@ autocms_travis_setup()
   echo "export AUTOCMS_WEBDIR=${TRAVIS_BUILD_DIR}/webdir" >> autocms.cfg
   exit 0
 }
+
+# default autocms variables
+export AUTOCMS_PYTHON_EXECUTABLE=${AUTOCMS_PYTHON_EXECUTABLE:-python}
 
 commandline_args=("$@")
 main

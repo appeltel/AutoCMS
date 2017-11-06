@@ -48,6 +48,10 @@ export AUTOCMS_LOG_LIFETIME=5
 # print logs of successful jobs to webpage? (set to TRUE for yes) 
 export AUTOCMS_PRINT_SUCCESS=FALSE
 
+# Python executable to be used by autocms. This will default to just
+# "python" but can be set to another value for using virtual environments
+export AUTOCMS_PYTHON_EXECUTABLE=python
+
 # The following strings are tokens to be put in the beginning
 # of lines in the test pbs script for the logharvester to read 
 # to determine the job status and properties.
