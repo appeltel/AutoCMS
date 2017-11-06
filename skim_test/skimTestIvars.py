@@ -8,7 +8,7 @@ process.load('Configuration.EventContent.EventContentHeavyIons_cff')
 import FWCore.ParameterSet.VarParsing as VarParsing
 
 ivars = VarParsing.VarParsing('python')
-ivars.inputFiles = '/store/hidata/HIRun2011/HIHighPt/RECO/14Mar2014-v2/00030/E225A85D-99C3-E311-B632-FA163EF2B3E5.root'
+ivars.inputFiles = '/store/hidata/HIRun2015/HIHardProbes/AOD/PromptReco-v1/000/263/745/00000/4CC806D2-2FBA-E511-B191-02163E014106.root'
 ivars.parseArguments()
 
 
@@ -27,7 +27,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 100
 ### Comment out for the timing being assuming running on secondary dataset with trigger bit selected already
 import HLTrigger.HLTfilters.hltHighLevel_cfi
 process.hltHIHighPt = HLTrigger.HLTfilters.hltHighLevel_cfi.hltHighLevel.clone()
-process.hltHIHighPt.HLTPaths = ['HLT_HIDoublePhoton15_*','HLT_HIJet80_*','HLT_HISinglePhoton40_*'] # for allphysics
+process.hltHIHighPt.HLTPaths = ['HLT_HISinglePhoton15_*','HLT_HIPuAK4CaloJet80_*','HLT_HIFullTrack45_*'] # for allphysics
 process.hltHIHighPt.andOr = cms.bool(True)
 process.hltHIHighPt.throw = cms.bool(False)
 

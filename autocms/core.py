@@ -1,6 +1,6 @@
 """Common functions and classes for AutoCMS components."""
 
-__version__ = '3.0.1'
+__version__ = '3.0.4'
 
 import re
 import os
@@ -19,7 +19,7 @@ class JobRecord(object):
     guaranteed to exist (with the specified type if listed):
 
         seq - the integer passed to the job execution script.
-        jobid - the scheduler job id or None if submission failed
+        jobid - the scheduler job id or 1 submission failed from time out, 2 for other reasons.
         submit_time (int): timestamp of submission time.
         submit_status (int): exit code of the submission command.
         start_time (int): timestamp of when the job started running
@@ -104,6 +104,13 @@ class JobRecord(object):
     def is_success(self):
         """Return boolean job success status."""
         if self.exit_code == 0:
+            return True
+        else:
+            return False
+
+    def is_retry(self):
+        """Return boolean job retry status."""
+        if self.jobid == 1:
             return True
         else:
             return False

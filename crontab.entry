@@ -1,0 +1,10 @@
+MAILTO=""
+*/10 * * * * cd /home/tuos/autocms/AutoCMS && /home/tuos/autocms/AutoCMS/autocms.sh submit skim_test 1
+0,10,20,30,40,50 * * * * cd /home/tuos/autocms/AutoCMS && /home/tuos/autocms/AutoCMS/autocms.sh logharvest skim_test
+5,15,25,35,45,55 * * * * cd /home/tuos/autocms/AutoCMS && /home/tuos/autocms/AutoCMS/autocms.sh report skim_test
+57 */3 * * * cd /home/tuos/autocms/AutoCMS && /home/tuos/autocms/AutoCMS/autocms.sh statsharvest skim_test
+# T2VanderbiltStorageTools
+*/15 * * * * cd /home/tuos/T2VanderbiltStorageTools/DepotMon && ./depotMonitor.sh /home/tuos/web/depotMon.html
+00 23 * * * cd /home/tuos/T2VanderbiltStorageTools/FileInventory && ./fileInventory.sh /home/tuos/web/fileInventory.html 
+30 02 * * * find /scratch/cms-stageout-logs/ -type f  -ctime +3 | xargs rm -f
+45 02 * * * find /scratch/cms-stageout-logs/ -type d  -empty | xargs rmdir

@@ -1,10 +1,11 @@
 """AutoCMSWebpage class to simplify generating a web page."""
-
+ 
 import os
 import time
 import re
 import shutil
 import importlib
+import subprocess
 
 from .stats import load_stats
 from .core import (load_records, __version__)
@@ -231,6 +232,88 @@ class AutoCMSWebpage(object):
                     self.page += '</span>'
         self.page += '</div>\n'
 
+    def add_job_submission_retries(self, width, times, warn_retries):
+        """Writes basic statistics on job submission retries.
+
+        Arguments:
+            width - max-width of element on the page in percent
+            times - list of time intervals in hours
+            warn_retries - rate of retries above which to display
+                        text in red"""
+        self.page += ('<div class="textbox" '
+                      'style="max-width:{0}%;">\n'.format(width))
+        self.page += ('<div class="textbox-header">'
+                      'Recent job submission retries:</div>\n')
+        for t in times:
+            min_time = int(time.time()) - t*3600
+            retries = sum(1 for job in self.records
+                           if job.is_retry() and
+                           job.start_time > min_time)
+            totalsubmission = sum(1 for job in self.records
+                            if job.start_time > min_time)
+            self.page += ("<br /><br />\nJob submission retries in the last "
+                          "{0} hours: {1}".format(t, retries))
+            self.page += ("<br />\nTotal job submissions in the last "
+                          "{0} hours: {1}".format(t, totalsubmission))
+            # print retry rate if jobs have actually been submitting
+            if totalsubmission > 0:
+                rate = float(100 * retries) / float(totalsubmission)
+                self.page += "<br />\nRetries/Total submissions ({0} hours): ".format(t)
+                if rate > warn_retries:
+                    self.page += '<span style="color:red;">'
+                self.page += "{0:.2f}%".format(rate)
+                if rate < warn_retries:
+                    self.page += '</span>'
+        self.page += '</div>\n'
+
+    def add_currentrunning_jobs(self, width):
+        """Writes running jobs"""
+        self.page += ('<div class="textbox" '
+                      'style="max-width:{0}%;">\n'.format(width))
+        self.page += ('<div class="textbox-header">'
+                      'Current running jobs on {0}:</div>\n'.format(time.ctime()))
+        cmd = ('squeue -h --user={0} --account={1}'.format(self.config['AUTOCMS_UNAME'],
+                                                           self.config['AUTOCMS_GNAME']))
+        result = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        output = result.communicate()[0].splitlines()
+        runningjobs = 0
+        for i in range(0, len(output)):
+          if output[i].split()[4] == 'R':
+            runningjobs +=1
+        self.page += ("<br />\nNumber of running jobs: {0}".format(runningjobs))
+        for i in range(0, len(output)):
+          if output[i].split()[4] == 'R':
+            self.page += ("<br />\nJob {0} has been running on {1} for "
+                          "{2}. ".format(output[i].split()[0], output[i].split()[7], output[i].split()[5]))
+        self.page += '</div>\n'
+
+    def add_currentpending_jobs(self, width):
+        """Writes pending jobs"""
+        self.page += ('<div class="textbox" '
+                      'style="max-width:{0}%;">\n'.format(width))
+        self.page += ('<div class="textbox-header">'
+                      'Current pending jobs on {0}:</div>\n'.format(time.ctime()))
+        cmd = ('squeue -h --user={0} --account={1}'.format(self.config['AUTOCMS_UNAME'],
+                                                           self.config['AUTOCMS_GNAME']))
+        result = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        output = result.communicate()[0].splitlines()
+        pendingjobs = 0
+        for i in range(0, len(output)):
+          if output[i].split()[4] == 'PD':
+            pendingjobs +=1
+        self.page += ("<br />\nNumber of pending jobs: {0}".format(pendingjobs))
+        for i in range(0, len(output)):
+          if output[i].split()[4] == 'PD':
+            self.page += ("<br />\nJob {0} is pending.".format(output[i].split()[0]))
+        self.page += '</div>\n'
+
+    def add_job_zero_long(self, header):
+        """Display 0 Long running job"""
+        self.page += '<div class="textbox" style="max-width:95%;">\n'
+        self.page += ('<div class="textbox-header">'
+                      '{0}</div><br />\n'.format(header))
+        self.page += '</div>\n'
+
     def add_job_listing(self, records, header, itemheader, **attr_desc):
         """Display information a list of JobRecords.
 
@@ -252,8 +335,9 @@ class AutoCMSWebpage(object):
             return
         self.logs_to_copy += [job.logfile for job in records]
         self.page += '<div class="textbox" style="max-width:95%;">\n'
+        job_counts_in_the_records = sum(1 for job in records)
         self.page += ('<div class="textbox-header">'
-                      '{0}</div><br />\n'.format(header))
+                      '{0} {1}</div><br />\n'.format(header, job_counts_in_the_records))
         records.sort(key=lambda x: x.start_time, reverse=True)
         for counter, job in enumerate(records):
             self.page += '<br />\n'
@@ -291,7 +375,7 @@ class AutoCMSWebpage(object):
         records_to_print = [job for job in self.records if
                             job.completed and job.start_time > min_time
                             and not job.is_success()]
-        header = 'Failed jobs from the last {0}  hours:'.format(hours)
+        header = 'Failed jobs from the last {0}  hours: '.format(hours)
         itemheader = '<span style="font-weight:bold">Error </span>'
         self.add_job_listing(records_to_print, header, itemheader,
                              error_string='Error Type', **attr_desc)

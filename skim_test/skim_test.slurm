@@ -26,7 +26,7 @@ main ()
 
   AUTODIR=$AUTOCMS_BASEDIR
   cd $AUTODIR/skim_test/
-  export SCRAM_ARCH=slc6_amd64_gcc472
+  export SCRAM_ARCH=slc6_amd64_gcc491
   echo "Set SCRAM_ARCH to $SCRAM_ARCH"
   setpkgs -a lio
 

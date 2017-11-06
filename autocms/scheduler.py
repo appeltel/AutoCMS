@@ -121,7 +121,11 @@ class SlurmScheduler(Scheduler):
                            sub_output.splitlines()[0].strip())
             logfile = testname + '.' + 'slurm' + '.o' + str(jobid) + '.log'
         else:
-            jobid = None
+            timeouterror = 'timed out'
+            if timeouterror in sub_output:
+               jobid = 1
+            else: 
+               jobid = 2
             logfile = (testname + '.' + 'submission' + '.o' +
                        str(timestamp) + "." + str(counter) + '.log')
             logpath = os.path.join(self.config['AUTOCMS_BASEDIR'],
