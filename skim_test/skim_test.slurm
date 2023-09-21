@@ -113,7 +113,7 @@ main ()
   printbanner "Running CMSSW Skim Job"
 
   echo;echo "Current system load:";echo
-  dstat --nocolor -cdngy 1 10
+  env -i dstat --nocolor -cdngy 1 10
 
   CMSRUNPROCBEFORE=$(ps aux | grep "[c]msRun" | grep -v "/usr/bin/time" | wc -l)
   echo;echo "Number of cmsRun processes on node: $CMSRUNPROCBEFORE ";echo
@@ -145,7 +145,7 @@ main ()
   echo "${AUTOCMS_node_jobs_count_TOKEN}${NODEJOBAVG}"
 
   echo;echo "Current system load:";echo
-  dstat --nocolor -cdngy 1 10
+  env -i dstat --nocolor -cdngy 1 10
 
   if [ $CMSSW_TEST_RESULT -eq 0 ]; then
     echo "SKIM_TEST: CMSSW execution OK"
